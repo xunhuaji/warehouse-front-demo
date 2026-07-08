@@ -9,15 +9,57 @@ const routes = [
     meta: { public: true }
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: () => import('@/views/Register.vue'),
+    meta: { public: true }
+  },
+  {
     path: '/',
     component: () => import('@/views/Layout.vue'),
-    redirect: '/product',
+    redirect: '/material',
     children: [
       {
-        path: 'product',
-        name: 'Product',
-        component: () => import('@/views/ProductList.vue'),
-        meta: { permission: 'product:view', title: '商品管理' }
+        path: 'material',
+        name: 'Material',
+        component: () => import('@/views/MaterialList.vue'),
+        meta: { permission: 'material:view', title: '物资库存' }
+      },
+      {
+        path: 'purchase',
+        name: 'Purchase',
+        component: () => import('@/views/PurchaseList.vue'),
+        meta: { permission: 'purchase:view', title: '采购记录' }
+      },
+      {
+        path: 'usage',
+        name: 'Usage',
+        component: () => import('@/views/UsageList.vue'),
+        meta: { permission: 'usage:view', title: '领用审批' }
+      },
+      {
+        path: 'alert',
+        name: 'Alert',
+        component: () => import('@/views/AlertList.vue'),
+        meta: { permission: 'alert:view', title: '库存预警' }
+      },
+      {
+        path: 'bill',
+        name: 'Bill',
+        component: () => import('@/views/BillList.vue'),
+        meta: { permission: 'fee:view', title: '月度账单' }
+      },
+      {
+        path: 'payment',
+        name: 'Payment',
+        component: () => import('@/views/PaymentList.vue'),
+        meta: { permission: 'fee:view', title: '缴费记录' }
+      },
+      {
+        path: 'report',
+        name: 'Report',
+        component: () => import('@/views/FeeReport.vue'),
+        meta: { permission: 'fee:report', title: '费用报表' }
       }
     ]
   }
@@ -32,7 +74,7 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
 
   if (to.meta.public) {
-    if (userStore.loaded && to.path === '/login') {
+    if (userStore.loaded && (to.path === '/login' || to.path === '/register')) {
       next('/')
     } else {
       next()
@@ -51,7 +93,7 @@ router.beforeEach(async (to, from, next) => {
 
   const requiredPerm = to.meta.permission
   if (requiredPerm && !userStore.hasPermission(requiredPerm)) {
-    next('/login')
+    next('/')
     return
   }
 
