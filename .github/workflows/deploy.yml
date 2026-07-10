@@ -1,0 +1,28 @@
+name: Build & Deploy GitHub Pages
+on:
+  push:
+    branches: [ main ] # 你推送的主分支
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 配置Node环境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 打包项目
+        run: npm run build
+
+      - name: 部署到Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
