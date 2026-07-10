@@ -1,6 +1,38 @@
 <template>
   <div>
-    <el-card shadow="never">
+    <el-card v-if="!userStore.isAdmin" shadow="never" class="fee-standard-card">
+      <template #header>收费标准（参照 fee_standard 表）</template>
+      <el-row :gutter="16">
+        <el-col :span="12">
+          <div class="standard-group">
+            <div class="standard-title">床位费</div>
+            <el-table :data="bedStandards" border size="small">
+              <el-table-column prop="name" label="类型" />
+              <el-table-column prop="amount" label="月费标准" width="120">
+                <template #default="{ row }">¥ {{ row.amount }} / 月</template>
+              </el-table-column>
+              <el-table-column prop="description" label="说明" show-overflow-tooltip />
+            </el-table>
+          </div>
+        </el-col>
+        <el-col :span="12">
+          <div class="standard-group">
+            <div class="standard-title">护理费</div>
+            <el-table :data="nursingStandards" border size="small">
+              <el-table-column prop="name" label="类型" />
+              <el-table-column prop="amount" label="月费标准" width="120">
+                <template #default="{ row }">¥ {{ row.amount }} / 月</template>
+              </el-table-column>
+              <el-table-column prop="description" label="说明" show-overflow-tooltip />
+            </el-table>
+          </div>
+        </el-col>
+      </el-row>
+      <el-alert type="info" :closable="false" show-icon style="margin-top:12px"
+        description="账单金额 = 老人床位类型对应床位费 + 护理等级对应护理费，请选择待缴账单进行在线缴费。" />
+    </el-card>
+
+    <el-card shadow="never" :class="{ 'bill-card': !userStore.isAdmin }">
       <el-form :inline="true" :model="query">
         <el-form-item label="老人姓名"><el-input v-model="query.elderName" clearable /></el-form-item>
         <el-form-item label="账单月份">
@@ -128,13 +160,14 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
-import { generateBills, getBillPage, getPaymentsByBill, payBill as payBillApi } from '@/api/fee'
+import { generateBills, getBillPage, getFeeStandards, getPaymentsByBill, payBill as payBillApi } from '@/api/fee'
 
 const userStore = useUserStore()
 const loading = ref(false)
 const genLoading = ref(false)
 const tableData = ref([])
 const total = ref(0)
+const standards = ref([])
 const genVisible = ref(false)
 const payVisible = ref(false)
 const detailVisible = ref(false)
@@ -153,6 +186,16 @@ const remainAmount = computed(() => {
 
 const billStatusText = (s) => ({ unpaid: '未缴', partial: '部分缴', paid: '已缴清' }[s] || s)
 const billStatusType = (s) => ({ unpaid: 'danger', partial: 'warning', paid: 'success' }[s] || 'info')
+
+const bedStandards = computed(() => standards.value.filter(s => s.type === 'bed'))
+const nursingStandards = computed(() => standards.value.filter(s => s.type === 'nursing'))
+
+const loadStandards = async () => {
+  if (!userStore.isAdmin) {
+    const res = await getFeeStandards()
+    standards.value = res.data
+  }
+}
 
 const loadData = async () => {
   loading.value = true
@@ -183,11 +226,14 @@ const viewPayments = async (row) => {
   paymentDetails.value = res.data
   detailVisible.value = true
 }
-onMounted(loadData)
+onMounted(() => { loadStandards(); loadData() })
 </script>
 
 <style scoped>
 .pagination { margin-top: 16px; display: flex; justify-content: flex-end; }
+.fee-standard-card { margin-bottom: 16px; }
+.bill-card { margin-top: 0; }
+.standard-title { font-weight: 600; margin-bottom: 8px; color: #303133; }
 .text-danger { color: #f56c6c; font-weight: 600; }
 .pay-info p { margin: 8px 0; color: #606266; }
 .pay-methods { margin-top: 8px; }

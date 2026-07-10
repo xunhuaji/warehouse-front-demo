@@ -91,6 +91,11 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
+  if (to.path === '/') {
+    next(userStore.isAdmin ? '/material' : '/bill')
+    return
+  }
+
   const requiredPerm = to.meta.permission
   if (requiredPerm && !userStore.hasPermission(requiredPerm)) {
     next('/')
