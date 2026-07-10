@@ -5,7 +5,7 @@
         <el-form-item label="名称"><el-input v-model="query.name" clearable @keyup.enter="loadData" /></el-form-item>
         <el-form-item label="编码"><el-input v-model="query.code" clearable @keyup.enter="loadData" /></el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="query.type" clearable placeholder="全部">
+          <el-select v-model="query.type" clearable placeholder="全部" style="width: 160px">
             <el-option label="药品" value="medicine" />
             <el-option label="器械" value="equipment" />
           </el-select>

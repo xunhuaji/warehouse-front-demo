@@ -7,7 +7,7 @@
           <el-date-picker v-model="query.billMonth" type="month" value-format="YYYY-MM" placeholder="选择月份" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" clearable placeholder="全部">
+          <el-select v-model="query.status" clearable placeholder="全部" style="width: 160px">
             <el-option label="未缴" value="unpaid" />
             <el-option label="部分缴" value="partial" />
             <el-option label="已缴清" value="paid" />

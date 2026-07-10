@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="query">
         <el-form-item label="物资名称"><el-input v-model="query.materialName" clearable /></el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="query.status" clearable placeholder="全部">
+          <el-select v-model="query.status" clearable placeholder="全部" style="width: 160px">
             <el-option label="待审批" value="pending" />
             <el-option label="已通过" value="approved" />
             <el-option label="已驳回" value="rejected" />
