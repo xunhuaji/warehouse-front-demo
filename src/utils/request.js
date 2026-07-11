@@ -3,8 +3,11 @@ import { ElMessage } from 'element-plus'
 import router from '@/router'
 import { useUserStore } from '@/store/user'
 
+// 从环境变量获取API基础URL
+const baseURL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 const request = axios.create({
-  baseURL: '/api',
+  baseURL: baseURL,
   timeout: 15000,
   withCredentials: true
 })
