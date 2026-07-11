@@ -33,7 +33,9 @@ export const useUserStore = defineStore('user', {
     },
     async login(form) {
       const res = await loginApi(form)
-      this.setUser(res.data)
+      if (res.data && res.data.userInfo) {
+        this.setUser(res.data.userInfo)
+      }
       return res
     },
     async fetchUserInfo() {
@@ -46,6 +48,7 @@ export const useUserStore = defineStore('user', {
         await logoutApi()
       } finally {
         this.clearUser()
+        localStorage.removeItem('satoken')
       }
     }
   }
