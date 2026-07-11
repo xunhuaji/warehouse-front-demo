@@ -1,1 +1,0 @@
-import{z as e}from"./index-D1fff34m.js";function r(t){return e.get("/material/page",{params:t})}function i(t){return e.get(`/material/${t}`)}function n(t){return e.post("/material",t)}function l(t){return e.put("/material",t)}function u(t){return e.delete(`/material/${t}`)}function o(){return e.get("/material/alert")}export{i as a,n as b,o as c,u as d,r as g,l as u};
